@@ -90,6 +90,7 @@ class RamanController(QtCore.QObject):
         self.model.sample_position = x
         self.widget.sample_position_txt.setText("{:.2f}".format(x))
         self.widget.set_raman_line_pos(x)
+        self.model.map_model.x_center = x
 
     def update_widget_parameter(self):
         self.widget.laser_line_txt.setText("{:.2f}".format(self.model.laser_line))
@@ -148,7 +149,6 @@ class RamanController(QtCore.QObject):
 
     def overlay_removed(self, ind):
         self.widget.remove_overlay(ind)
-
 
     def overlay_show_cb_state_changed(self, ind, state):
         """

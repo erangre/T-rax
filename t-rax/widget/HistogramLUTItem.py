@@ -253,6 +253,8 @@ class HistogramLUTItem(GraphicsWidget):
         hist_x, hist_y = self.imageItem.getHistogram()
         if hist_x is None:
             return
+        self.hist_x = hist_x
+        self.hist_y = hist_y
 
         hist_x[hist_x <= 0] = 1
         hist_y[hist_y <= 0] = 1

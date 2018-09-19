@@ -25,6 +25,7 @@ from qtpy import QtCore, QtWidgets
 from model.BaseModel import SingleSpectrumModel
 from widget.BaseWidget import BaseWidget
 from widget.Widgets import open_file_dialog, save_file_dialog, open_files_dialog
+from .MapController import MapController
 
 from .NewFileInDirectoryWatcher import NewFileInDirectoryWatcher
 
@@ -39,6 +40,8 @@ class BaseController(QtCore.QObject):
 
         self.widget = widget
         self.model = model
+
+        self.map_controller = MapController('', self.widget, self.model)
 
         self._working_dir = ''
         self._create_autoprocess_system()
@@ -62,6 +65,7 @@ class BaseController(QtCore.QObject):
 
         self.widget.graph_widget.mouse_moved.connect(self.graph_mouse_moved)
         self.widget.roi_widget.img_widget.mouse_moved.connect(self.img_mouse_moved)
+        self.widget.show_2d_map_btn.clicked.connect(self.show_2d_map_btn_clicked)
 
     def connect_click_function(self, emitter, function):
         emitter.clicked.connect(function)
@@ -73,11 +77,19 @@ class BaseController(QtCore.QObject):
             filenames = open_files_dialog(self.widget, caption="Load Experiment SPE",
                                           directory=self._working_dir)
 
+        if len(filenames) > 1 and self.widget.batch_mode_mapping_rb.isChecked():
+            self.model.map_model.reset_map_data()
+            self.model.map_model.all_positions_defined_in_files = True
+            self.model.map_model.map_uses_patterns = False
+
         for filename in filenames:
             if filename is not '':
                 self.load_data_file(filename)
                 if len(filenames) > 1:
                     self.save_data_btn_clicked(filename=filename)
+                    if self.widget.batch_mode_mapping_rb.isChecked():
+                        map_working_directory = os.path.dirname(filename)
+                        self.model.map_model.add_file_to_map_data(filename, map_working_directory, None)
 
     def load_data_file(self, filename):
         self.model.load_file(filename)
@@ -162,3 +174,6 @@ class BaseController(QtCore.QObject):
     def _create_autoprocess_system(self):
         self._directory_watcher = NewFileInDirectoryWatcher(file_types=['.spe'])
         self._directory_watcher.file_added.connect(self.load_data_file)
+
+    def show_2d_map_btn_clicked(self):
+        self.widget.map_2D_widget.raise_widget()
