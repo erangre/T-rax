@@ -29,6 +29,10 @@ class MapController(object):
         :type widget.map_2D_widget: Map2DWidget
         """
 
+        # TODO: Make it work in nm mode
+        # TODO: Make work in ruby, diamond raman and temperature
+        # TODO: Remove phase button
+
         self.working_dir = working_dir
         self.widget = widget  # type: BaseWidget
         self.model = model
