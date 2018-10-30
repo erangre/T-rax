@@ -25,7 +25,7 @@ class MapModel(QtCore.QObject):
         self.map_roi_list = []
         self.roi_math = ''
         self.x_center = 5.9
-        self.theta_range = 0.05
+        self.x_range_width = 10
         self.num_hor = 0
         self.num_ver = 0
         self.roi_num = 0

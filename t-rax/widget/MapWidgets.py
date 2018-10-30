@@ -23,7 +23,7 @@ class Map2DWidget(QtWidgets.QWidget):
         self.map_data = {}
         self.map_roi = {}
         self.x_center = 5.9
-        self.theta_range = 0.1
+        self.x_range_width = 10
         self.num_hor = 0
         self.num_ver = 0
         self.roi_num = 0

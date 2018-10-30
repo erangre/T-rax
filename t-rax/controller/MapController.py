@@ -138,8 +138,8 @@ class MapController(object):
             x_center = params['x_center']
         except (KeyError, TypeError):
             x_center = self.map_model.x_center
-        x_start = x_center - self.map_model.theta_range
-        x_end = x_center + self.map_model.theta_range
+        x_start = x_center - self.map_model.x_range_width
+        x_end = x_center + self.map_model.x_range_width
         roi_start = self.map_model.convert_units(x_start, 'cm^-1', self.map_model.units, self.map_model.wavelength)
         roi_end = self.map_model.convert_units(x_end, 'cm^-1', self.map_model.units, self.map_model.wavelength)
 
@@ -245,7 +245,7 @@ class MapController(object):
         for each_roi in self.map_widget.roi_list.selectedItems():
             for key in self.map_widget.map_roi:
                 if self.map_widget.map_roi[key]['List_Obj'] == each_roi:
-                    self.widget.pattern_widget.pattern_plot.removeItem(self.map_widget.map_roi[key]['Obj'])
+                    self.widget.graph_widget.remove_item(self.map_widget.map_roi[key]['Obj'])
                     del self.map_widget.map_roi[key]
                     break
             self.map_widget.roi_list.takeItem(self.map_widget.roi_list.row(each_roi))
@@ -258,7 +258,7 @@ class MapController(object):
     def btn_roi_clear_clicked(self):
         self.map_widget.roi_list.clear()
         for key in self.map_widget.map_roi:
-            self.widget.pattern_widget.pattern_plot.removeItem(self.map_widget.map_roi[key]['Obj'])
+            self.widget.graph_widget.remove_item(self.map_widget.map_roi[key]['Obj'])
         self.map_widget.map_roi.clear()
         self.map_widget.roi_num = 0
         self.toggle_map_widgets_enable(False)
