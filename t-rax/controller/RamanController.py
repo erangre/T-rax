@@ -107,26 +107,33 @@ class RamanController(QtCore.QObject):
         settings.setValue("raman roi", " ".join(str(e) for e in self.model.roi.as_list()))
 
     def load_settings(self, settings):
-        raman_data_path = str(settings.value("raman data file").toString())
-        if os.path.exists(raman_data_path):
-            self.base_controller.load_file_btn_clicked(raman_data_path)
-
-        raman_autoprocessing = settings.value("raman autoprocessing").toBool()
+        raman_data_path = str(settings.value("raman data file"))
+        try:
+            if os.path.exists(raman_data_path):
+                self.base_controller.load_data_file(raman_data_path)
+        except TypeError:
+            pass
+        raman_autoprocessing = settings.value("raman autoprocessing") == 'true'
         if raman_autoprocessing:
             self.widget.autoprocess_cb.setChecked(True)
-
-        value = settings.value("raman laser line").toFloat()
-        self.model.laser_line = value[0] if value[1] else self.model.laser_line
-
-        value = settings.value("raman mode").toInt()
-        self.model.mode = value[0] if value[1] else self.model.mode
-
-        roi_str = str(settings.value("raman roi").toString())
+        value = float(settings.value("raman laser line"))
+        try:
+            self.model.laser_line = value if value else self.model.laser_line
+        except TypeError:
+            pass
+        value = settings.value("raman mode")
+        try:
+            self.model.mode = int(value) if value else self.model.mode
+        except TypeError:
+            pass
+        roi_str = str(settings.value("raman roi"))
         if roi_str != "":
             roi = [float(e) for e in roi_str.split()]
-            self.model.roi = roi
+            try:
+                self.model.roi = roi
+            except TypeError:
+                pass
             self.widget.roi_widget.set_rois([roi])
-
         self.update_widget_parameter()
 
     def overlay_add_btn_clicked(self):
