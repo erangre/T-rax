@@ -24,7 +24,7 @@ class MapModel(QtCore.QObject):
         self.map_data = {}
         self.map_roi_list = []
         self.roi_math = ''
-        self.x_center = 5.9
+        self.x_center = 100
         self.x_range_width = 10
         self.num_hor = 0
         self.num_ver = 0

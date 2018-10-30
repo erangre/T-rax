@@ -75,10 +75,17 @@ class RamanController(QtCore.QObject):
         self.widget.set_raman_line_pos(new_value)
 
     def display_mode_changed(self):
+        if self.model.mode:
+            previous_unit = 'nm'
+        else:
+            previous_unit = 'cm^-1'
+
         if self.widget.nanometer_cb.isChecked():
             self.model.mode = RamanModel.WAVELENGTH_MODE
+            self.base_controller.map_controller.convert_all_units(previous_unit, 'nm', self.model.laser_line)
         else:
             self.model.mode = RamanModel.REVERSE_CM_MODE
+            self.base_controller.map_controller.convert_all_units(previous_unit, 'cm^-1', self.model.laser_line)
 
     def spectrum_changed(self):
         if self.model.mode == RamanModel.WAVELENGTH_MODE:
@@ -108,31 +115,22 @@ class RamanController(QtCore.QObject):
 
     def load_settings(self, settings):
         raman_data_path = str(settings.value("raman data file"))
-        try:
-            if os.path.exists(raman_data_path):
-                self.base_controller.load_data_file(raman_data_path)
-        except TypeError:
-            pass
+        if os.path.exists(raman_data_path):
+            self.base_controller.load_data_file(raman_data_path)
+
         raman_autoprocessing = settings.value("raman autoprocessing") == 'true'
         if raman_autoprocessing:
             self.widget.autoprocess_cb.setChecked(True)
+
         value = float(settings.value("raman laser line"))
-        try:
-            self.model.laser_line = value if value else self.model.laser_line
-        except TypeError:
-            pass
+        self.model.laser_line = value if value else self.model.laser_line
         value = settings.value("raman mode")
-        try:
-            self.model.mode = int(value) if value else self.model.mode
-        except TypeError:
-            pass
+        self.model.mode = int(value) if value else self.model.mode
+
         roi_str = str(settings.value("raman roi"))
         if roi_str != "":
             roi = [float(e) for e in roi_str.split()]
-            try:
-                self.model.roi = roi
-            except TypeError:
-                pass
+            self.model.roi = roi
             self.widget.roi_widget.set_rois([roi])
         self.update_widget_parameter()
 

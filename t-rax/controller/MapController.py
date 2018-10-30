@@ -125,7 +125,7 @@ class MapController(object):
             self.map_widget.roi_list.selectAll()
         for item in self.map_widget.roi_list.selectedItems():
             roi_full_name = item.text().split('_')
-            roi_name = roi_full_name[1].split('-')
+            roi_name = roi_full_name[1].split(':')
             self.map_model.add_roi_to_roi_list({'roi_letter': roi_full_name[0], 'roi_start': roi_name[0],
                                                 'roi_end': roi_name[1]})
         self.map_model.roi_math = roi_math
@@ -233,7 +233,7 @@ class MapController(object):
         self.widget.repaint()
 
     def generate_roi_name(self, roi_start, roi_end, roi_num):
-        roi_name = chr(roi_num+65) + '_' + '{:.3f}'.format(roi_start) + '-' + '{:.3f}'.format(roi_end)
+        roi_name = chr(roi_num+65) + '_' + '{:.3f}'.format(roi_start) + ':' + '{:.3f}'.format(roi_end)
         return roi_name
 
     def update_roi_letters(self):
@@ -323,7 +323,7 @@ class MapController(object):
         self.map_widget.roi_list.selectAll()
         for item in self.map_widget.roi_list.selectedItems():
             roi_full_name = item.text().split('_')
-            roi_name = roi_full_name[1].split('-')
+            roi_name = roi_full_name[1].split(':')
             roi_start = self.model.map_model.convert_units(float(roi_name[0]), previous_unit, new_unit, wavelength)
             roi_end = self.model.map_model.convert_units(float(roi_name[1]), previous_unit, new_unit, wavelength)
             roi_new_name = self.generate_roi_name(roi_start, roi_end, ord(roi_full_name[0])-65)
