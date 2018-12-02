@@ -241,17 +241,20 @@ class MapModel(QtCore.QObject):
 
     def convert_units(self, value, previous_unit, new_unit, wavelength):
         self.units = new_unit
-        if previous_unit == 'cm^-1':
+        if previous_unit == 'cm^-1' or not value:
             raman_shift = value
         elif previous_unit == 'nm':
             raman_shift = (1.0/wavelength - 1.0/value)*1e7
         else:
-            tth = 0
+            res = 0
 
         if new_unit == 'cm^-1':
             res = raman_shift
         elif new_unit == 'nm':
-            res = 1.0/(1.0/wavelength - value*1e-7)
+            try:
+                res = 1.0/(1.0/wavelength - value*1e-7)
+            except ZeroDivisionError:
+                res = 0
         else:
             res = 0
         return res
